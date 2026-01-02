@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly Report Writer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 헤더: 스트릭 & 요약 카운터 -->
+        <header class="header">
+            <h1>Weekly Report Writer</h1>
+            <div class="streak-container">
+                <div class="streak-display" id="streakDisplay">X</div>
+                <div class="streak-message" id="streakMessage">오늘은 X.🥲 지금 작성하면 1🔥부터 다시 시작!</div>
+            </div>
+            <div class="summary-counter">
+                <span id="totalDays">0</span>/365일 작성 |
+                <span id="currentStreak">X</span> |
+                프리즈: <span id="freezeRemaining">1</span>회 남음
+                <button id="freezeBtn" class="freeze-btn">❄️ 프리즈 사용</button>
+            </div>
+        </header>
+
+        <!-- 잔디 그리드 -->
+        <section class="grass-section">
+            <div class="grass-header">
+                <h2>Activity</h2>
+                <div class="today-label" id="todayLabel"></div>
+            </div>
+            <div class="grass-container">
+                <div class="grass-grid" id="grassGrid"></div>
+                <div class="mood-selector">
+                    <span class="mood-selector-title">오늘의 기분</span>
+                    <div class="mood-emojis" id="moodEmojis">
+                        <button class="mood-emoji" data-mood="great" title="아주 좋아요">😊</button>
+                        <button class="mood-emoji" data-mood="good" title="좋아요">🙂</button>
+                        <button class="mood-emoji" data-mood="okay" title="보통이에요">😐</button>
+                        <button class="mood-emoji" data-mood="tired" title="피곤해요">😮‍💨</button>
+                        <button class="mood-emoji" data-mood="sad" title="힘들어요">😢</button>
+                    </div>
+                    <div class="mood-display" id="moodDisplay"></div>
+                </div>
+            </div>
+            <div class="legend">
+                <span class="legend-item"><span class="legend-box level-0"></span>미작성</span>
+                <span class="legend-item"><span class="legend-box level-1"></span>Lv.1</span>
+                <span class="legend-item"><span class="legend-box level-2"></span>Lv.2</span>
+                <span class="legend-item"><span class="legend-box level-3"></span>Lv.3</span>
+                <span class="legend-item"><span class="legend-box level-4"></span>Lv.4</span>
+                <span class="legend-item"><span class="legend-box freeze"></span>❄️</span>
+                <span class="legend-text">← 오늘 | 과거 →</span>
+            </div>
+        </section>
+
+        <!-- 차트 섹션 -->
+        <section class="charts-section">
+            <div class="charts-grid">
+                <!-- 주간 활동 막대 그래프 -->
+                <div class="chart-card">
+                    <h3>주간 활동량</h3>
+                    <div class="bar-chart" id="barChart"></div>
+                    <div class="chart-labels" id="barLabels"></div>
+                </div>
+                <!-- 레벨 추이 선 그래프 -->
+                <div class="chart-card">
+                    <h3>최근 7일 레벨</h3>
+                    <div class="line-chart-container">
+                        <svg class="line-chart" id="lineChart" viewBox="0 0 280 100"></svg>
+                    </div>
+                    <div class="chart-labels" id="lineLabels"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 과거 리포트 목록 -->
+        <section class="history-section">
+            <h2>Past Reports</h2>
+            <ul id="reportList" class="report-list"></ul>
+        </section>
+
+        <!-- 입력 폼 -->
+        <section class="form-section">
+            <h2>New Report</h2>
+
+            <!-- 기간 -->
+            <div class="form-group">
+                <label>기간 (필수) *</label>
+                <div class="date-range">
+                    <input type="date" id="startDate" required>
+                    <span>~</span>
+                    <input type="date" id="endDate" required>
+                    <button type="button" id="thisWeekBtn" class="quick-btn">이번 주</button>
+                    <button type="button" id="lastWeekBtn" class="quick-btn">지난 주</button>
+                </div>
+            </div>
+
+            <!-- 한 줄 요약 -->
+            <div class="form-group">
+                <label>이번 주 한 줄 요약 (선택)</label>
+                <input type="text" id="summary" placeholder="예: 온보딩 이탈 구간 개선 가설 정리 완료">
+            </div>
+
+            <!-- 통합 텍스트 입력 -->
+            <div class="form-group">
+                <label>리포트 내용 입력</label>
+
+                <!-- 미니 템플릿 -->
+                <div class="mini-template">
+                    <div class="template-header">
+                        <span>예시</span>
+                        <button type="button" id="insertTemplateBtn" class="insert-template-btn">빈 템플릿 삽입</button>
+                        <button type="button" id="insertExampleBtn" class="insert-example-btn">예시 삽입</button>
+                    </div>
+                    <div class="template-sections">
+                        <button type="button" class="template-chip" data-template="done">Done:</button>
+                        <button type="button" class="template-chip" data-template="progress">진행중:</button>
+                        <button type="button" class="template-chip" data-template="blockers">이슈:</button>
+                        <button type="button" class="template-chip" data-template="metrics">지표:</button>
+                        <button type="button" class="template-chip" data-template="plan">다음주:</button>
+                    </div>
+                    <div class="template-preview">
+<pre>## Done:
+- 가입 당일 이탈률 정의 확정
+- UX 개선안 1차 와이어프레임 공유
+- 외부 요청 이슈 2건 원인 분석
+
+## 진행중:
+- 2주 스프린트 보드 템플릿 적용
+- 리워드 정책 변경 영향도 검토
+
+## 이슈:
+- 외부 파트너 일정 미확정 / 일정 확정 커뮤니케이션 필요
+- 개발 리소스 부족 / MVP 범위 우선 합의 필요
+
+## 지표:
+- 이탈률: 32% / -3%p
+- DAU: 15,000 / +5%
+
+## 다음주:
+- 개선안 실험 설계
+- 파트너 일정 확정 및 배포 계획</pre>
+                    </div>
+                </div>
+
+                <textarea id="contentInput" class="content-input" placeholder="위 템플릿을 클릭하거나, 자유롭게 작성하세요.
+
+마크다운 형식을 지원합니다:
+## 섹션 제목
+- 항목
+- **굵게** / *기울임*"></textarea>
+            </div>
+
+            <!-- 숨겨진 데이터 저장용 -->
+            <div id="doneList" style="display:none;"></div>
+            <div id="progressList" style="display:none;"></div>
+            <div id="blockersList" style="display:none;"></div>
+            <div id="metricsList" style="display:none;"></div>
+            <div id="planList" style="display:none;"></div>
+
+            <!-- 버튼 영역 -->
+            <div class="button-group">
+                <button id="generateBtn" class="primary-btn" disabled>리포트 생성</button>
+                <button id="resetBtn" class="danger-btn">초기화</button>
+            </div>
+        </section>
+
+        <!-- 미리보기 & 내보내기 -->
+        <section class="preview-section">
+            <h2>Preview</h2>
+
+            <!-- Empty State: 예시 영역 -->
+            <div id="emptyState" class="empty-state">
+                <div class="empty-state-header">
+                    <span class="empty-state-icon">📝</span>
+                    <p>아직 리포트가 없습니다. 예시를 참고해보세요!</p>
+                </div>
+                <div class="example-switch" id="exampleSwitch">
+                    <button class="example-type-btn active" data-type="basic">기본 PM</button>
+                    <button class="example-type-btn" data-type="real">실전 PM</button>
+                </div>
+                <div class="example-preview" id="examplePreview"></div>
+            </div>
+
+            <!-- 실제 리포트 영역 -->
+            <div id="reportState" class="report-state" style="display: none;">
+                <textarea id="preview" class="preview-area" readonly></textarea>
+                <div class="export-buttons">
+                    <button id="copyBtn" class="export-btn">📋 복사</button>
+                    <button id="downloadMdBtn" class="export-btn">📄 MD 다운로드</button>
+                    <button id="downloadTxtBtn" class="export-btn">📝 TXT 다운로드</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 툴팁 -->
+        <div id="tooltip" class="tooltip"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
