@@ -756,17 +756,30 @@ function saveReport(data) {
     reports[reportKey] = data;
     saveReports(reports);
 
-    // 일일 활동 기록 (오늘 날짜)
-    const today = getToday();
+    // 일일 활동 기록 (리포트 기간의 모든 날짜에 반영)
     const activity = getDailyActivity();
     const level = calculateLevel(data);
 
-    activity[today] = {
-        level,
-        reportKey,
-        updatedAt: new Date().toISOString(),
-        isFreeze: activity[today]?.isFreeze || false
-    };
+    // 시작일부터 종료일까지 모든 날짜에 활동 기록
+    const startDate = new Date(data.start);
+    const endDate = new Date(data.end);
+
+    for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+        const dateStr = formatDate(d);
+
+        // 이미 더 높은 레벨이 있으면 유지, 아니면 업데이트
+        const existingLevel = activity[dateStr]?.level || 0;
+        const existingMood = activity[dateStr]?.mood;
+
+        activity[dateStr] = {
+            level: Math.max(existingLevel, level),
+            reportKey,
+            updatedAt: new Date().toISOString(),
+            isFreeze: activity[dateStr]?.isFreeze || false,
+            mood: existingMood || activity[dateStr]?.mood
+        };
+    }
+
     saveDailyActivity(activity);
 
     return reportKey;
