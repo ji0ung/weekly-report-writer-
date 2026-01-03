@@ -1471,27 +1471,13 @@ window.addEventListener('beforeunload', (e) => {
 });
 
 // ========================
-// 전체 초기화
+// 입력 내용 초기화
 // ========================
-function resetAll() {
-    if (!confirm('모든 데이터를 초기화하시겠습니까?\n(저장된 리포트, 잔디, 프리즈 모두 삭제됩니다)')) {
-        return;
-    }
-
-    // 앱 관련 키만 삭제 (다른 앱 데이터 보호)
-    Object.values(STORAGE_KEYS).forEach(key => {
-        localStorage.removeItem(key);
-    });
+function resetForm() {
     clearForm(true);
     setUnsavedChanges(false);
-    renderGrassGrid();
-    renderCharts();
-    updateStreakDisplay();
-    updateReportList();
-    initMoodSelector();
     showEmptyState();
-    hasGeneratedReport = false;
-    showToast('모든 데이터가 초기화되었습니다.');
+    showToast('입력 내용이 초기화되었습니다.');
 }
 
 // ========================
@@ -1653,8 +1639,8 @@ function initEventListeners() {
         }, 300);
     });
 
-    // 초기화
-    elements.resetBtn.addEventListener('click', resetAll);
+    // 입력 초기화
+    elements.resetBtn.addEventListener('click', resetForm);
 
     // 프리즈
     elements.freezeBtn.addEventListener('click', useFreeze);

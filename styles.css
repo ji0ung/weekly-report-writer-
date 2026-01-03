@@ -1115,7 +1115,7 @@ input:focus {
     justify-content: flex-end;
 }
 
-.danger-btn-small {
+.secondary-btn-small {
     background: transparent;
     border: 1px solid var(--border-color);
     color: var(--text-secondary);
@@ -1126,10 +1126,10 @@ input:focus {
     transition: all 0.2s;
 }
 
-.danger-btn-small:hover {
-    border-color: var(--danger-color);
-    color: var(--danger-color);
-    background: rgba(248, 81, 73, 0.05);
+.secondary-btn-small:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    background: rgba(88, 166, 255, 0.05);
 }
 
 /* 미리보기 섹션 */
