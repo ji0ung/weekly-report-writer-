@@ -15,12 +15,12 @@
     --danger-color: #f85149;
     --success-color: #3fb950;
 
-    /* 잔디 색상 */
+    /* 잔디 색상 (대비 개선) */
     --grass-0: #161b22;
-    --grass-1: #0e4429;
-    --grass-2: #006d32;
-    --grass-3: #26a641;
-    --grass-4: #39d353;
+    --grass-1: #196c3d;
+    --grass-2: #239a4e;
+    --grass-3: #2fcb5f;
+    --grass-4: #4ae36e;
     --grass-freeze: #a5d6ff;
 
     --max-width: 900px;
@@ -182,12 +182,6 @@ body {
     }
 }
 
-.grass-cell:hover {
-    transform: scale(1.15);
-    z-index: 10;
-    filter: brightness(1.3);
-}
-
 .grass-cell.today {
     background: linear-gradient(135deg, #ff9a9e, #fad0c4) !important;
     animation: pulse 2s infinite;
@@ -229,23 +223,18 @@ body {
 }
 
 .mood-emoji {
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
     background: var(--bg-color);
     border: 2px solid var(--border-color);
     border-radius: 50%;
     cursor: pointer;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s;
-}
-
-.mood-emoji:hover {
-    transform: scale(1.15);
-    border-color: var(--accent-color);
-    background: rgba(88, 166, 255, 0.1);
+    /* 터치 타겟 최소 44px 권장 (WCAG) */
 }
 
 .mood-emoji.selected {
@@ -1082,6 +1071,26 @@ input:focus {
     cursor: not-allowed;
 }
 
+.btn-loading {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-loading::before {
+    content: '';
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
 .danger-btn {
     background: transparent;
     border: 1px solid var(--danger-color);
@@ -1095,6 +1104,32 @@ input:focus {
 
 .danger-btn:hover {
     background: rgba(248, 81, 73, 0.1);
+}
+
+/* 초기화 버튼 분리 영역 */
+.reset-area {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+}
+
+.danger-btn-small {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.danger-btn-small:hover {
+    border-color: var(--danger-color);
+    color: var(--danger-color);
+    background: rgba(248, 81, 73, 0.05);
 }
 
 /* 미리보기 섹션 */
@@ -1272,7 +1307,7 @@ input:focus {
     border-radius: 8px;
     font-size: 0.9rem;
     z-index: 1000;
-    animation: slideUp 0.3s ease, fadeOut 0.3s ease 2s forwards;
+    animation: slideUp 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
 }
 
 @keyframes slideUp {
@@ -1292,7 +1327,55 @@ input:focus {
     }
 }
 
-/* 반응형 */
+/* 호버 효과는 호버 가능한 기기에서만 */
+@media (hover: hover) {
+    .grass-cell:hover {
+        transform: scale(1.15);
+        z-index: 10;
+        filter: brightness(1.3);
+    }
+
+    .mood-emoji:hover {
+        transform: scale(1.15);
+        border-color: var(--accent-color);
+        background: rgba(88, 166, 255, 0.1);
+    }
+}
+
+/* 터치 기기에서는 호버 효과 제거 */
+@media (hover: none) {
+    .grass-cell:hover,
+    .mood-emoji:hover {
+        transform: none;
+        filter: none;
+    }
+}
+
+/* 반응형 - 태블릿 */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+
+    .header h1 {
+        font-size: 1.3rem;
+    }
+
+    .streak-display {
+        font-size: 2.8rem;
+    }
+
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .grass-cell {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+/* 반응형 - 모바일 */
 @media (max-width: 600px) {
     .container {
         padding: 10px;
@@ -1338,13 +1421,17 @@ input:focus {
     }
 
     .mood-emoji {
-        width: 32px;
-        height: 32px;
-        font-size: 1rem;
+        width: 44px;
+        height: 44px;
+        font-size: 1.2rem;
     }
 
     .button-group {
         flex-direction: column;
+    }
+
+    .reset-area {
+        justify-content: center;
     }
 
     .export-buttons {

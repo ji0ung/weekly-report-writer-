@@ -33,12 +33,12 @@
                 <div class="grass-grid" id="grassGrid"></div>
                 <div class="mood-selector">
                     <span class="mood-selector-title">오늘의 기분</span>
-                    <div class="mood-emojis" id="moodEmojis">
-                        <button class="mood-emoji" data-mood="great" title="아주 좋아요">😊</button>
-                        <button class="mood-emoji" data-mood="good" title="좋아요">🙂</button>
-                        <button class="mood-emoji" data-mood="okay" title="보통이에요">😐</button>
-                        <button class="mood-emoji" data-mood="tired" title="피곤해요">😮‍💨</button>
-                        <button class="mood-emoji" data-mood="sad" title="힘들어요">😢</button>
+                    <div class="mood-emojis" id="moodEmojis" role="group" aria-label="오늘의 기분 선택">
+                        <button class="mood-emoji" data-mood="great" title="아주 좋아요" aria-label="아주 좋아요">😊</button>
+                        <button class="mood-emoji" data-mood="good" title="좋아요" aria-label="좋아요">🙂</button>
+                        <button class="mood-emoji" data-mood="okay" title="보통이에요" aria-label="보통이에요">😐</button>
+                        <button class="mood-emoji" data-mood="tired" title="피곤해요" aria-label="피곤해요">😮‍💨</button>
+                        <button class="mood-emoji" data-mood="sad" title="힘들어요" aria-label="힘들어요">😢</button>
                     </div>
                     <div class="mood-display" id="moodDisplay"></div>
                 </div>
@@ -50,7 +50,7 @@
                 <span class="legend-item"><span class="legend-box level-3"></span>Lv.3</span>
                 <span class="legend-item"><span class="legend-box level-4"></span>Lv.4</span>
                 <span class="legend-item"><span class="legend-box freeze"></span>❄️</span>
-                <span class="legend-text">← 오늘 | 과거 →</span>
+                <span class="legend-text">오늘 ← · → 과거</span>
             </div>
         </section>
 
@@ -74,19 +74,13 @@
             </div>
         </section>
 
-        <!-- 과거 리포트 목록 -->
-        <section class="history-section">
-            <h2>Past Reports</h2>
-            <ul id="reportList" class="report-list"></ul>
-        </section>
-
         <!-- 입력 폼 -->
         <section class="form-section">
             <h2>New Report</h2>
 
             <!-- 기간 -->
             <div class="form-group">
-                <label>기간 (필수) *</label>
+                <label>기간 *</label>
                 <div class="date-range">
                     <input type="date" id="startDate" required>
                     <span>~</span>
@@ -160,9 +154,14 @@
             <div id="planList" style="display:none;"></div>
 
             <!-- 버튼 영역 -->
-            <div class="button-group">
-                <button id="generateBtn" class="primary-btn" disabled>리포트 생성</button>
-                <button id="resetBtn" class="danger-btn">초기화</button>
+            <div class="button-group" role="group" aria-label="리포트 액션">
+                <button id="generateBtn" class="primary-btn" disabled>
+                    <span class="btn-text">리포트 생성</span>
+                    <span class="btn-loading" style="display:none;">생성 중...</span>
+                </button>
+            </div>
+            <div class="reset-area">
+                <button id="resetBtn" class="danger-btn-small">🗑️ 전체 초기화</button>
             </div>
         </section>
 
@@ -192,6 +191,12 @@
                     <button id="downloadTxtBtn" class="export-btn">📝 TXT 다운로드</button>
                 </div>
             </div>
+        </section>
+
+        <!-- 과거 리포트 목록 -->
+        <section class="history-section">
+            <h2>Past Reports</h2>
+            <ul id="reportList" class="report-list"></ul>
         </section>
 
         <!-- 툴팁 -->

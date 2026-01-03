@@ -860,6 +860,9 @@ function clearForm(clearStorage = true) {
 function saveDraft() {
     const data = collectFormData();
     saveCurrentDraft(data);
+    // 내용이 있으면 미저장 상태로 표시
+    const hasContent = data.rawContent || data.summary || data.start || data.end;
+    setUnsavedChanges(!!hasContent);
 }
 
 function restoreDraft() {
@@ -1447,8 +1450,25 @@ function showToast(message) {
 
     setTimeout(() => {
         toast.remove();
-    }, 2500);
+    }, 3000);
 }
+
+// ========================
+// 페이지 이탈 경고
+// ========================
+let hasUnsavedChanges = false;
+
+function setUnsavedChanges(value) {
+    hasUnsavedChanges = value;
+}
+
+window.addEventListener('beforeunload', (e) => {
+    if (hasUnsavedChanges) {
+        e.preventDefault();
+        e.returnValue = '';
+        return '';
+    }
+});
 
 // ========================
 // 전체 초기화
@@ -1458,8 +1478,12 @@ function resetAll() {
         return;
     }
 
-    localStorage.clear();
+    // 앱 관련 키만 삭제 (다른 앱 데이터 보호)
+    Object.values(STORAGE_KEYS).forEach(key => {
+        localStorage.removeItem(key);
+    });
     clearForm(true);
+    setUnsavedChanges(false);
     renderGrassGrid();
     renderCharts();
     updateStreakDisplay();
@@ -1596,16 +1620,37 @@ function initEventListeners() {
 
     // 리포트 생성
     elements.generateBtn.addEventListener('click', () => {
-        const data = collectFormData();
-        const markdown = generateMarkdown(data);
-        showReportState(markdown);
-        saveReport(data);
+        const btn = elements.generateBtn;
+        const btnText = btn.querySelector('.btn-text');
+        const btnLoading = btn.querySelector('.btn-loading');
 
-        renderGrassGrid();
-        renderCharts();
-        updateStreakDisplay();
-        updateReportList();
-        showToast('리포트가 생성되었습니다!');
+        // 로딩 상태 표시
+        btn.disabled = true;
+        btnText.style.display = 'none';
+        btnLoading.style.display = 'inline';
+
+        // 약간의 딜레이로 UX 피드백 (너무 빠르면 깜빡임)
+        setTimeout(() => {
+            const data = collectFormData();
+            const markdown = generateMarkdown(data);
+            showReportState(markdown);
+            saveReport(data);
+
+            renderGrassGrid();
+            renderCharts();
+            updateStreakDisplay();
+            updateReportList();
+
+            // 저장 완료 - 미저장 상태 해제
+            setUnsavedChanges(false);
+
+            // 버튼 원복
+            btnText.style.display = 'inline';
+            btnLoading.style.display = 'none';
+            btn.disabled = false;
+
+            showToast('리포트가 생성되었습니다!');
+        }, 300);
     });
 
     // 초기화
